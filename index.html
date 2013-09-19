@@ -2,8 +2,8 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-   <meta name="author"             content="Alan G. Labouseur" />
-   <link rel="stylesheet" href="alanbbos.css" type="text/css" media="screen" />
+   <meta name="author"             content="Shane Crumlish" />
+   <link rel="stylesheet" href="shanebbos.css" type="text/css" media="screen" />
    <title>
       ShaneBBOS - a Browser-based virtual Operating System
    </title>
@@ -28,12 +28,17 @@
 
    <!-- Other Routines -->
    <script type="text/javascript" src="scripts/utils.js"></script>
-   <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
+   <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script> 
 </head>
 
 <body onload="hostInit();">
 
 <div id="divMain" style="width:100%;">
+    <div id="divStatus">
+        <span>OS Status: </span>
+        <span id = "status">The OS is running smoothly.</span>
+        <span id = "datetime"> </span>
+    </div>
 
    <div id="divButtonBar" style="margin:4px;">
       <input type="button"

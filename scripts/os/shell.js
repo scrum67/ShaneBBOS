@@ -6,6 +6,9 @@
 
 // TODO: Write a base class / prototype for system services and let Shell inherit from it.
 
+// default user is "Shane"
+var user = "Shane";
+
 function Shell() {
     // Properties
     this.promptStr   = ">";
@@ -80,6 +83,49 @@ function shellInit() {
     sc.function = shellPrompt;
     this.commandList[this.commandList.length] = sc;
 
+    // date
+    sc = new ShellCommand();
+    sc.command = "date";
+    sc.description = "- Displays the current date and time.";
+    sc.function = shellDate;
+    this.commandList[this.commandList.length] = sc;
+
+    // whereami
+    sc = new ShellCommand();
+    sc.command = "whereami";
+    sc.description = "- Displays your current location";
+    sc.function = shellWhere;
+    this.commandList[this.commandList.length] = sc;
+    
+    // user
+    sc = new ShellCommand();
+    sc.command = "user";
+    sc.description = "- Displays the user";
+    sc.function = shellUser;
+    this.commandList[this.commandList.length] = sc;
+
+    // status
+    sc = new ShellCommand();
+    sc.command = "status";
+    sc.description = "- Update the status of the OS";
+    sc.function = shellStatus;
+    this.commandList[this.commandList.length] = sc;
+    
+    // bsod
+    sc = new ShellCommand();
+    sc.command = "bsod";
+    sc.description = "- Throws an interrupt and breaks everthing";
+    sc.function = shellBsod;
+    this.commandList[this.commandList.length] = sc;
+    
+    // load
+    sc = new ShellCommand();
+    sc.command = "load";
+    sc.description = "- Check \"User Program Input\" for valid commands";
+    sc.function = shellLoad;
+    this.commandList[this.commandList.length] = sc;
+    
+    
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
 
@@ -141,9 +187,11 @@ function shellHandleInput(buffer)
         else    // It's just a bad command.
         {
             this.execute(shellInvalidCommand);
+            
         }
     }
 }
+
 
 function shellParseInput(buffer)
 {
@@ -360,4 +408,73 @@ function shellPrompt(args)
     {
         _StdIn.putText("Usage: prompt <string>  Please supply a string.");
     }
+    
+}
+
+function shellDate(args)
+{
+    _StdIn.putText("" + new Date());    
+}
+
+function shellWhere(args)
+{
+    _StdIn.putText("/chrome/os/generic_directory/generic_filename");    
+}
+
+function shellUser(args)
+{
+    if (args.length > 0) {
+        user = args[0];
+        _StdIn.putText(String(user));  
+    } 
+    else
+    _StdIn.putText(String(user));
+    //_StdIn.putText("Usage: user <name>");  
+}
+
+function shellStatus(args)
+{
+    status = "";
+    if (args.length > 0)
+        {
+            for (i = 0; i < args.length; i++)
+                {
+                    status += args[i] + " ";
+                }
+            document.getElementById("status").innerHTML = status;
+        }
+    else
+    _StdIn.putText("Usage: status <update>");    
+}
+
+function shellBsod()
+{
+    _KernelInterruptQueue.enqueue( new Interrupt(10, "") );
+}
+
+
+function shellLoad()
+{
+    var input = document.getElementById('taProgramInput').value.trim();
+    console.log(input)
+    var bool = true;
+    if(input.length <= 0) {
+            _StdIn.putText("No input");    
+        }
+        else {
+        var commands = input.split(" ");
+        console.log(commands)
+        for(var i = 0; i < commands.length; i++)
+            {
+                if(commands[i].length > 2)
+                    bool = false;
+                else if (commands[i].match(/[0-9a-f]+/i) == "")
+                    bool = false;
+            }
+            if (bool)
+                _StdIn.putText("Valid");
+            else 
+                _StdIn.putText("Invalid");  
+    }
+
 }

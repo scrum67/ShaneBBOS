@@ -41,8 +41,31 @@ function hostInit()
       _GLaDOS = new Glados();
       _GLaDOS.init();
    };
-
+    
+    this.startTime()      
 }
+
+function startTime()
+    {
+        var date = new Date();
+        var h = date.getHours();
+        var m = date.getMinutes();
+        var s = date.getSeconds();
+        m = check(m);
+        s = check(s);
+        document.getElementById('datetime').innerHTML= date.toDateString() + " " + h + ":" + m + ":" + s;
+        setTimeout(function(){startTime()},500);
+    }
+
+function check(i)
+    {
+        if (i < 10) {
+          i = "0" + i;
+        }
+    return i;
+    }
+
+
 
 function hostLog(msg, source)
 {
