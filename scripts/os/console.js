@@ -26,6 +26,7 @@ function CLIconsole() {
 
     this.clearScreen = function() {
        _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
+        this.textSave = "";
     };
 
     this.resetXY = function() {
@@ -126,12 +127,11 @@ function CLIconsole() {
     
     this.scrollhandling = function () {
         // The maximum number of lines in the canvas
-       var maxNumOfLines = Math.floor(_Canvas.height / (_DefaultFontSize + _FontHeightMargin))
+       var maxNumOfLines = Math.floor(_Canvas.height / (_DefaultFontSize + _FontHeightMargin)) - 1;
    
                    // lines is an array where each element is each line, delimiter is /n
                    var lines = this.textSave.match(/[^\r\n]+/g);
                    if(lines.length > maxNumOfLines) {
-                       console.log(lines.length);
                        // reset x,y coords and clear screen
                        this.resetXY();
                        this.clearScreen();

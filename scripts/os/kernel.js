@@ -186,6 +186,6 @@ function krnTrapError(msg)
 {
     hostLog("OS ERROR - TRAP: " + msg);
     // TODO: Display error on console, perhaps in some sort of colored screen. (Perhaps blue?)
-    document.write("BLUE SCREEN OF DEATH");
+    document.write("<body style='background-color:blue;'>BLUE SCREEN OF DEATH</body>");
     krnShutdown();
 }
