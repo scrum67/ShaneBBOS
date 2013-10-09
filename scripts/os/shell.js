@@ -125,6 +125,13 @@ function shellInit() {
     sc.function = shellLoad;
     this.commandList[this.commandList.length] = sc;
     
+    // run
+    sc = new ShellCommand();
+    sc.command = "run";
+    sc.description = "- Runs a loaded program";
+    sc.function = shellRun;
+    this.commandList[this.commandList.length] = sc;
+    
     
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
@@ -456,14 +463,12 @@ function shellBsod()
 function shellLoad()
 {
     var input = document.getElementById('taProgramInput').value.trim();
-    console.log(input)
     var bool = true;
     if(input.length <= 0) {
             _StdIn.putText("No input");    
         }
         else {
         var commands = input.split(" ");
-        console.log(commands)
         for(var i = 0; i < commands.length; i++)
             {
                 if(commands[i].length > 2)
@@ -471,10 +476,40 @@ function shellLoad()
                 else if (commands[i].match(/[0-9a-f]+/i) == "")
                     bool = false;
             }
+            
+            var pcb = new ProcessControlBlock(_PID);
+            
+            // increment global _PID for next program
+            _PID++;
+            
             if (bool)
-                _StdIn.putText("Valid");
+            {
+                for(var j = 0; j < commands.length; j++)
+                {
+                _Memory[j] = commands[j];
+                }
+                _ProcessQueue.enqueue(pcb);
+                _StdIn.putText("PID: " + String(pcb.pid));
+                _MemoryDisplay.updateMemoryDisplay();
+            }
             else 
                 _StdIn.putText("Invalid");  
     }
+}
 
+function shellRun(args) {
+    if (args.length > 0) {
+            // take PCB off the queue, store it into global _CurrentProcess
+            _CurrentProcess = _ProcessQueue.dequeue()
+
+            // ensure a valid PID is specfied
+            if(args == _CurrentProcess.pid) {
+            
+            // reset the program counter
+            _CPU.PC = _CurrentProcess.base;
+            _CPU.isExecuting = true;
+            } else 
+                _StdIn.putText("Invalid PID specified");
+    } else
+        _StdIn.putText("Usage: run <pid>");
 }

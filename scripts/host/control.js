@@ -36,6 +36,11 @@ function hostInit()
 	// Set focus on the start button.
    document.getElementById("btnStartOS").focus();
 
+   // Create memory table
+   _MemoryDisplay = new MemoryDisplay();
+   _MemoryDisplay.createMemoryTable();
+
+
    // Check for our testing and enrichment core.
    if (typeof Glados === "function") {
       _GLaDOS = new Glados();
@@ -96,7 +101,7 @@ function hostLog(msg, source)
 function hostBtnStartOS_click(btn)
 {
     // Disable the start button...
-    btn.disabled = true;
+   btn.disabled = true;
     
     // .. enable the Halt and Reset buttons ...
     document.getElementById("btnHaltOS").disabled = false;
@@ -108,6 +113,13 @@ function hostBtnStartOS_click(btn)
     // ... Create and initialize the CPU ...
     _CPU = new Cpu();
     _CPU.init();
+    
+    // Create and initialize memory and the memory manager
+    _Memory = new Memory();
+    _MemoryManager = new MemoryManager
+    
+    // initialize process queue?
+    _ProcessQueue = new Queue();
 
     // ... then set the host clock pulse ...
     _hardwareClockID = setInterval(hostClockPulse, CPU_CLOCK_INTERVAL);

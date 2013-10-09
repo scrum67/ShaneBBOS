@@ -30,6 +30,8 @@ function krnBootstrap()      // Page 8.
    _StdIn  = _Console;
    _StdOut = _Console;
 
+
+    
    // Load the Keyboard Device Driver
    krnTrace("Loading the keyboard device driver.");
    krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.  TODO: Should that have a _global-style name?
@@ -91,7 +93,7 @@ function krnOnCPUClockPulse()
     }    
     else                       // If there are no interrupts and there is nothing being executed then just be idle.
     {
-       krnTrace("Idle");
+   //    krnTrace("Idle");
     }
 }
 
@@ -185,7 +187,8 @@ function krnTrace(msg)
 function krnTrapError(msg)
 {
     hostLog("OS ERROR - TRAP: " + msg);
-    // TODO: Display error on console, perhaps in some sort of colored screen. (Perhaps blue?)
+    // Display error on console, blue screen of death
     document.write("<body style='background-color:blue;'>BLUE SCREEN OF DEATH</body>");
+
     krnShutdown();
 }
