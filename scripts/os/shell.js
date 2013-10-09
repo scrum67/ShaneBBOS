@@ -488,9 +488,15 @@ function shellLoad()
                 {
                 _Memory[j] = commands[j];
                 }
-                _ProcessQueue.enqueue(pcb);
-                _StdIn.putText("PID: " + String(pcb.pid));
-                _MemoryDisplay.updateMemoryDisplay();
+
+                // this is probably just temporary, but check that only one process is running at a time
+                if(_ProcessQueue.getSize() >= 1)
+                    _StdIn.putText("Error: Only one process at a time")
+                else {
+                    _ProcessQueue.enqueue(pcb);
+                    _StdIn.putText("PID: " + String(pcb.pid));
+                    _MemoryDisplay.updateMemoryDisplay();
+                }
             }
             else 
                 _StdIn.putText("Invalid");  
