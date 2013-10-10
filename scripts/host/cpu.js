@@ -91,7 +91,7 @@ function loadAccConstant() {
 
 // Function for AD
 function loadAccMemory() {
-    _CPU.Acc = parseInt(_Memory[_MemoryManager.getAddress()]);
+    _CPU.Acc = parseInt(_Memory[_MemoryManager.getAddress()], 16);
     _CPU.PC++;
 }
 
