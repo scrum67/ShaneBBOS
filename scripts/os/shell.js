@@ -476,7 +476,8 @@ function shellLoad()
                 else if (commands[i].match(/[0-9a-f]+/i) == "")
                     bool = false;
             }
-            
+            var pcb = new ProcessControlBlock(_PID);
+
             
             if (bool)
             {
@@ -489,7 +490,6 @@ function shellLoad()
                 if(_ProcessQueue.getSize() >= 1)
                     _StdIn.putText("Error: Only one process at a time")
                 else {
-                    var pcb = new ProcessControlBlock(_PID);
             
                     // increment global _PID for next program
                     _PID++;

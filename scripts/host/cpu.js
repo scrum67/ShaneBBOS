@@ -106,7 +106,7 @@ function storeAccMemory() {
 
 // Function for 6D
 function addCarry() {
-    _CPU.Acc += parseInt(_Memory[_MemoryManager.getAddress()], 16)
+    _CPU.Acc += parseInt(_Memory[_MemoryManager.getAddress()], 16);
     _CPU.PC++;
 }
 
@@ -124,7 +124,7 @@ function loadXMemory() {
 
 // Function for A0
 function loadYConstant() {
-    _CPU.Yreg = parseInt(_MemoryManager.getNextLocation());
+    _CPU.Yreg = _MemoryManager.getNextLocation();
     _CPU.PC++;
 }
 
@@ -148,8 +148,11 @@ function systemBreak() {
 function compareX() {
     if(parseInt(_Memory[_MemoryManager.getAddress()]) == _CPU.Xreg)
         _CPU.Zflag = 1;
-    _CPU.PC++
+    else 
+        _CPU.Zflag = 0;
+    _CPU.PC++;
 }
+
 
 // Function for D0
 function branchXBytes() {
@@ -187,6 +190,7 @@ function incrementVal() {
     _CPU.PC++;
 }
 
+
 // Function for FF
 function systemCall() {
     if (_CPU.Xreg == 1) {
@@ -211,6 +215,7 @@ function systemCall() {
             address++;
             // reset the current address to the next address in memory
             current = _Memory[address]
+            console.log(string)
         }
         // output the string containing everything in the specified range
         _StdIn.putText(string);
@@ -219,3 +224,5 @@ function systemCall() {
     }
     _CPU.PC++;
 }
+
+
