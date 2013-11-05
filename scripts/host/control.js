@@ -19,61 +19,59 @@
 //
 // Control Services
 //
-function hostInit()
-{
-	// Get a global reference to the canvas.  TODO: Move this stuff into a Display Device Driver, maybe?
-	_Canvas  = document.getElementById('display');
+function hostInit() {
+    // Get a global reference to the canvas.  TODO: Move this stuff into a Display Device Driver, maybe?
+    _Canvas = document.getElementById('display');
 
-	// Get a global reference to the drawing context.
-	_DrawingContext = _Canvas.getContext('2d');
+    // Get a global reference to the drawing context.
+    _DrawingContext = _Canvas.getContext('2d');
 
-	// Enable the added-in canvas text functions (see canvastext.js for provenance and details).
-	CanvasTextFunctions.enable(_DrawingContext);   // TODO: Text functionality is now built in to the HTML5 canvas. Consider using that instead.
+    // Enable the added-in canvas text functions (see canvastext.js for provenance and details).
+    CanvasTextFunctions.enable(_DrawingContext); // TODO: Text functionality is now built in to the HTML5 canvas. Consider using that instead.
 
-	// Clear the log text box.
-	document.getElementById("taLog").value="";
+    // Clear the log text box.
+    document.getElementById("taLog").value = "";
 
-	// Set focus on the start button.
-   document.getElementById("btnStartOS").focus();
+    // Set focus on the start button.
+    document.getElementById("btnStartOS").focus();
 
-   // Create memory table
-   _MemoryDisplay = new MemoryDisplay();
-   _MemoryDisplay.createMemoryTable();
+    // Create memory table
+    _MemoryDisplay = new MemoryDisplay();
+    _MemoryDisplay.createMemoryTable();
 
 
-   // Check for our testing and enrichment core.
-   if (typeof Glados === "function") {
-      _GLaDOS = new Glados();
-      _GLaDOS.init();
-   };
-    
-    this.startTime()      
+    // Check for our testing and enrichment core.
+    if (typeof Glados === "function") {
+        _GLaDOS = new Glados();
+        _GLaDOS.init();
+    };
+
+    this.startTime()
 }
 
-function startTime()
-    {
-        var date = new Date();
-        var h = date.getHours();
-        var m = date.getMinutes();
-        var s = date.getSeconds();
-        m = check(m);
-        s = check(s);
-        document.getElementById('datetime').innerHTML= date.toDateString() + " " + h + ":" + m + ":" + s;
-        setTimeout(function(){startTime()},500);
-    }
+function startTime() {
+    var date = new Date();
+    var h = date.getHours();
+    var m = date.getMinutes();
+    var s = date.getSeconds();
+    m = check(m);
+    s = check(s);
+    document.getElementById('datetime').innerHTML = date.toDateString() + " " + h + ":" + m + ":" + s;
+    setTimeout(function() {
+        startTime()
+    }, 500);
+}
 
-function check(i)
-    {
-        if (i < 10) {
-          i = "0" + i;
-        }
+function check(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
     return i;
-    }
+}
 
 
 
-function hostLog(msg, source)
-{
+function hostLog(msg, source) {
     // Check the source.
     if (!source) {
         source = "?";
@@ -86,7 +84,7 @@ function hostLog(msg, source)
     var now = new Date().getTime();
 
     // Build the log string.   
-    var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";    
+    var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now + " })" + "\n";
 
     // Update the log console.
     var taLog = document.getElementById("taLog");
@@ -98,28 +96,30 @@ function hostLog(msg, source)
 //
 // Control Events
 //
-function hostBtnStartOS_click(btn)
-{
+function hostBtnStartOS_click(btn) {
     // Disable the start button...
-   btn.disabled = true;
-    
+    btn.disabled = true;
+
     // .. enable the Halt and Reset buttons ...
     document.getElementById("btnHaltOS").disabled = false;
     document.getElementById("btnReset").disabled = false;
-    
+
     // .. set focus on the OS console display ... 
     document.getElementById("display").focus();
-    
+
     // ... Create and initialize the CPU ...
     _CPU = new Cpu();
     _CPU.init();
-    
+
     // Create and initialize memory and the memory manager
     _Memory = new Memory();
-    _MemoryManager = new MemoryManager
+    _MemoryManager = new MemoryManager();
+
+    // initialize resident list
+    _ResidentList = [];
     
-    // initialize process queue?
-    _ProcessQueue = new Queue();
+    // initialize resident list
+    _ReadyQueue = new Queue;
 
     // ... then set the host clock pulse ...
     _hardwareClockID = setInterval(hostClockPulse, CPU_CLOCK_INTERVAL);
@@ -127,8 +127,7 @@ function hostBtnStartOS_click(btn)
     krnBootstrap();
 }
 
-function hostBtnHaltOS_click(btn)
-{
+function hostBtnHaltOS_click(btn) {
     hostLog("emergency halt", "host");
     hostLog("Attempting Kernel shutdown.", "host");
     // Call the OS shutdown routine.
@@ -138,10 +137,9 @@ function hostBtnHaltOS_click(btn)
     // TODO: Is there anything else we need to do here?
 }
 
-function hostBtnReset_click(btn)
-{
+function hostBtnReset_click(btn) {
     // The easiest and most thorough way to do this is to reload (not refresh) the document.
-    location.reload(true);  
+    location.reload(true);
     // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
     // be reloaded from the server. If it is false or not specified, the browser may reload the 
     // page from its cache, which is not what we want.

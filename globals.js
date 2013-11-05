@@ -30,7 +30,13 @@ var _Memory = null;
 
 var _CurrentProcess = null;
 
+var _ReadyQueue = null;
+
 var _MemoryDisplay = null;
+
+var TOTAL_MEMORY = 768;
+
+var PARTITION_SIZE = 256;
 
 // Not the actual PID, but used to get and increment PIDs
 var _PID = 0;
@@ -53,7 +59,7 @@ var _KernelInterruptQueue = null;
 var _KernelBuffers = null;
 var _KernelInputQueue = null;
 
-var _ProcessQueue = null;
+var _ResidentList = null;
 
 // Standard input and output
 var _StdIn  = null;

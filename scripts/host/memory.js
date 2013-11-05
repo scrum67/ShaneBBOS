@@ -1,6 +1,6 @@
 function Memory(){
-    var memoryArray = new Array();
-	for(var i = 0; i < 256; i++)
+    var memoryArray = [];
+	for(var i = 0; i < TOTAL_MEMORY; i++)
 	{
 		memoryArray[i] = "00";
 	}

@@ -132,6 +132,12 @@ function shellInit() {
     sc.function = shellRun;
     this.commandList[this.commandList.length] = sc;
     
+    // runall
+    sc = new ShellCommand();
+    sc.command = "runall";
+    sc.description = "- Runs all loaded programs";
+    sc.function = shellRunAll;
+    this.commandList[this.commandList.length] = sc;
     
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
@@ -473,7 +479,7 @@ function shellLoad()
             {
                 if(commands[i].length > 2)
                     bool = false;
-                else if (commands[i].match(/[0-9a-f]+/i) == "")
+                else if (commands[i].match(/[0-9a-f]+/i) === "")
                     bool = false;
             }
             var pcb = new ProcessControlBlock(_PID);
@@ -481,32 +487,43 @@ function shellLoad()
             
             if (bool)
             {
-                for(var j = 0; j < commands.length; j++)
-                {
-                _Memory[j] = commands[j];
-                }
+                var numOfProcesses = _ResidentList.length;
 
                 // this is probably just temporary, but check that only one process is running at a time
-                if(_ProcessQueue.getSize() >= 1)
-                    _StdIn.putText("Error: Only one process at a time")
+                if(numOfProcesses >= 3)
+                    _StdIn.putText("Error: Only three processes can be loaded at a time")
                 else {
-            
-                    // increment global _PID for next program
-                    _PID++;
-                    _ProcessQueue.enqueue(pcb);
-                    _StdIn.putText("PID: " + String(pcb.pid));
-                    _MemoryDisplay.updateMemoryDisplay();
+                    // put commands in memory
+                    for(var j = 0; j < commands.length; j++) {
+                        //TODO: add partition size to j, (relocation value?)
+                        if(numOfProcesses === 0)
+                        _Memory[j] = commands[j];
+                        else if(numOfProcesses === 1)
+                        _Memory[j + PARTITION_SIZE] = commands[j];
+                        else if(numOfProcesses === 2)
+                        _Memory[j + PARTITION_SIZE * numOfProcesses] = commands[j];
+                    }
+                        // increment global _PID for next program
+                        _PID++;
+                        _ResidentList.push(pcb);
+
+                        _StdIn.putText("PID: " + String(pcb.pid));
+                        _MemoryDisplay.updateMemoryDisplay();
                 }
             }
-            else 
+            else
                 _StdIn.putText("Invalid");  
     }
 }
 
 function shellRun(args) {
     if (args.length > 0) {
+        
+            _ReadyQueue.enqueue(_ResidentList[0]);
             // take PCB off the queue, store it into global _CurrentProcess
-            _CurrentProcess = _ProcessQueue.dequeue()
+            _CurrentProcess = _ReadyQueue.dequeue()
+            
+
 
             // ensure a valid PID is specfied
             if(args == _CurrentProcess.pid) {
@@ -518,4 +535,9 @@ function shellRun(args) {
                 _StdIn.putText("Invalid PID specified");
     } else
         _StdIn.putText("Usage: run <pid>");
+}
+
+// TODO: runall command
+function shellRunAll(args) {
+
 }

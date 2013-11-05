@@ -215,7 +215,6 @@ function systemCall() {
             address++;
             // reset the current address to the next address in memory
             current = _Memory[address]
-            console.log(string)
         }
         // output the string containing everything in the specified range
         _StdIn.putText(string);
