@@ -111,6 +111,7 @@ function krnOnCPUClockPulse()
              var pcb = _ReadyQueue.shift();
              _CPU.contextSwitch(_ReadyQueue[0])
              _ReadyQueue.push(pcb);
+            hostLog("Scheduling change", "OS");
              }
          }
 }

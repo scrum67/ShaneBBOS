@@ -580,9 +580,11 @@ function shellRun(args) {
 }
 
 function shellRunAll(args) {
-    for(var i = 0; i < _ResidentList.length; ++i) {
-            shellRun(i + "");
-        }
+    for(i in _ResidentList) {
+    //for(var i = 0; i < _ResidentList.length; ++i) {
+        pid = _ResidentList[i].pid
+        shellRun(pid + "");
+    }
         
     
   //  _CPU.PC = _CurrentProcess.base;
@@ -599,17 +601,37 @@ function shellQuantum(args) {
 }
 
 function shellKill(args) {
-    
     if(args = _CurrentProcess.pid) {
         //kill current process
+      //  _CPU.isExecuting = false;
+        //_ReadyQueue.shift();
+        //_KernelInterruptQueue.enqueue( new Interrupt(PROCESS_TERMINATED, "") );
+        
+        /**
+        for (var i = 0; i < CpuScheduler.readyQueue.getSize(); i++) {
+            var process = CpuScheduler.readyQueue.dequeue();
+            if (process.processId !== pcb.processId) {
+               CpuScheduler.readyQueue.enqueue(process);
+            }
+        }*/
+        
+        
+        
     } else {
         // look through ready queue and kill the specified process
+        for(var i = 0; i < _ReadyQueue.length; ++i) {
+            var process = _ReadyQueue.shift()
+            if(process.pid !== parseInt(args)) {
+                _ReadyQueue.push(process);
+                console.log("hi");
+            }
+        }
     }
 }
 
 function shellProcesses(args) {
     var numProcesses = 0;
-	for( i in _ResidentList) {
+	for(i in _ResidentList) {
 		numProcesses++;
 	}
 	
