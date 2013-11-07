@@ -107,13 +107,13 @@ function krnOnCPUClockPulse()
          counter++;
          if(counter >= QUANTUM) {
              counter = 0;
-             if(_ReadyQueue.length != 0) {
+            // if(_ReadyQueue.length != 0) {
              var pcb = _ReadyQueue.shift();
              console.log(pcb);
              _CPU.contextSwitch(_ReadyQueue[0])
              _ReadyQueue.push(pcb);
             hostLog("Scheduling change", "OS");
-             }
+             //}
          }
 }
 
