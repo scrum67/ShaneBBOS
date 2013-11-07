@@ -536,12 +536,12 @@ function shellLoad()
                         }
                         else if(_MemoryManager.memoryPartitions.thirdOpen === true) {
                             for(var j = 0; j < commands.length; j++) {
-                            _Memory[j + ((PARTITION_SIZE * 2))] = commands[j];
+                            _Memory[j + ((((PARTITION_SIZE * 2))))] = commands[j];
                             }
                             pcb.base = _MemoryManager.memoryPartitions.thirdBase;
                             pcb.limit = _MemoryManager.memoryPartitions.thirdLimit;
                             _MemoryManager.memoryPartitions.thirdOpen = false;
-                            _MemoryDisplay.updateRQDisplayOne(pcb);
+                            _MemoryDisplay.updateRQDisplayThree(pcb);
                         }
 
                         // increment global _PID for next program
@@ -582,12 +582,9 @@ function shellRunAll(args) {
     for(var i = 0; i < _ResidentList.length; ++i) {
       //  var pid;
     //    pid = _ResidentList[i].pid
+
         shellRun(i + "");
     }
-        
-    
-  //  _CPU.PC = _CurrentProcess.base;
-    // TODO: delete program from memory after finished executing? Maybe not, j(os)eph does not
     
 }
 
@@ -606,10 +603,6 @@ function shellKill(args) {
         //_ReadyQueue.shift();
         //_KernelInterruptQueue.enqueue( new Interrupt(PROCESS_TERMINATED, "") );
         
-
-        
-        
-        
     } else {
         // look through ready queue and kill the specified process
         for(var i = 0; i < _ReadyQueue.length; ++i) {
@@ -620,6 +613,8 @@ function shellKill(args) {
             }
         }
     }
+        
+
 }
 
 function shellProcesses(args) {

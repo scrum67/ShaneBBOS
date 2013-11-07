@@ -105,7 +105,7 @@ function krnOnCPUClockPulse()
         // ROUND ROBIN SCHEDULING
     
          counter++;
-         if(counter > QUANTUM) {
+         if(counter >= QUANTUM) {
              counter = 0;
              if(_ReadyQueue.length != 0) {
              var pcb = _ReadyQueue.shift();
