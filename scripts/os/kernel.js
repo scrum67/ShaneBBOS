@@ -95,6 +95,14 @@ function krnOnCPUClockPulse()
     {
    //    krnTrace("Idle");
     }
+    
+    
+    
+    // ROUND ROBIN SCHEDULING
+    
+    
+    
+    
 }
 
 
@@ -132,6 +140,9 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
         case KEYBOARD_IRQ: 
             krnKeyboardDriver.isr(params);   // Kernel mode device driver
             _StdIn.handleInput();
+            break;
+        case PROCESS_TERMINATED:
+            _CPU.isExecuting = false;
             break;
         default: 
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

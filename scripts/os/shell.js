@@ -483,6 +483,7 @@ function shellLoad()
                     bool = false;
             }
             var pcb = new ProcessControlBlock(_PID);
+            _CurrentProcess = pcb;
 
             
             if (bool)
@@ -496,12 +497,21 @@ function shellLoad()
                     // put commands in memory
                     for(var j = 0; j < commands.length; j++) {
                         //TODO: add partition size to j, (relocation value?)
-                        if(numOfProcesses === 0)
-                        _Memory[j] = commands[j];
-                        else if(numOfProcesses === 1)
-                        _Memory[j + PARTITION_SIZE] = commands[j];
-                        else if(numOfProcesses === 2)
-                        _Memory[j + PARTITION_SIZE * numOfProcesses] = commands[j];
+                        if(numOfProcesses === 0) {
+                            _Memory[j] = commands[j];
+                            pcb.base = _MemoryManager.memoryPartitions.firstBase;
+                            pcb.limit = _MemoryManager.memoryPartitions.firstLimit;
+                        }
+                        else if(numOfProcesses === 1) {
+                            _Memory[j + PARTITION_SIZE] = commands[j];
+                            pcb.base = _MemoryManager.memoryPartitions.secondBase;
+                            pcb.limit = _MemoryManager.memoryPartitions.secondLimit;
+                        }
+                        else if(numOfProcesses === 2) {
+                            _Memory[j + PARTITION_SIZE * numOfProcesses] = commands[j];
+                            pcb.base = _MemoryManager.memoryPartitions.thirdBase;
+                            pcb.limit = _MemoryManager.memoryPartitions.thirdLimit;
+                        }
                     }
                         // increment global _PID for next program
                         _PID++;
@@ -519,17 +529,26 @@ function shellLoad()
 function shellRun(args) {
     if (args.length > 0) {
         
-            _ReadyQueue.enqueue(_ResidentList[0]);
-            // take PCB off the queue, store it into global _CurrentProcess
-            _CurrentProcess = _ReadyQueue.dequeue()
+            // TODO: throw interrupt to cpu when process is done executing, to
+            //       delete process from _ResidentList (use splice() method)
             
 
+            
+            // add specified process to ready queue
+            _ReadyQueue.enqueue(_ResidentList[args]);
 
+            var pcb = _ReadyQueue.dequeue();
+            _CPU.contextSwitch(pcb);
+            // take PCB off the queue, store it into global _CurrentProcess
+            _CurrentProcess = pcb;
+
+            console.log(_CurrentProcess);
+            
             // ensure a valid PID is specfied
             if(args == _CurrentProcess.pid) {
             
             // reset the program counter
-            _CPU.PC = _CurrentProcess.base;
+            
             _CPU.isExecuting = true;
             } else 
                 _StdIn.putText("Invalid PID specified");
@@ -537,7 +556,18 @@ function shellRun(args) {
         _StdIn.putText("Usage: run <pid>");
 }
 
-// TODO: runall command
 function shellRunAll(args) {
+    for(i in _ResidentList) {
+		_ResidentList.shift();
+		_ReadyQueue.enqueue(_ResidentList[i]);
+    }
+    
+	_CurrentProcess = _ReadyQueue.dequeue();
+    
+    _CPU.PC = _CurrentProcess.base;
+    // TODO: delete program from memory after finished executing? Maybe not, j(os)eph does not
+    
+    _CPU.isExecuting = true;
+    
 
 }

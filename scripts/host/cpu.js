@@ -29,9 +29,25 @@ function Cpu() {
         this.Zflag = 0;      
         this.isExecuting = false;  
     };
-    
+    this.contextSwitch = function(pcb) {
+        // save the current state into the current pcb
+        if (_CurrentProcess != null) {
+            _CurrentProcess.PC = this.PC;
+            _CurrentProcess.Acc = this.Acc;
+            _CurrentProcess.Xreg = this.Xreg;
+            _CurrentProcess.Yreg = this.Yreg;
+            _CurrentProcess.Zflag = this.Zflag;
+        }
+        // set the state to the new pcb
+        this.PC    = pcb.PC;     
+        this.Acc   = pcb.Acc;     
+        this.Xreg  = pcb.Xreg;  
+        this.Yreg  = pcb.Yreg;  
+        this.Zflag = pcb.Zflag;
+    };
     this.cycle = function() {
         krnTrace("CPU cycle");
+        console.log("PC: " + this.PC)
         // TODO: Accumulate CPU usage and profiling statistics here.
         // Do the real work here. Be sure to set this.isExecuting appropriately.
         
@@ -141,7 +157,7 @@ function noOp() {
 
 // Function for 00
 function systemBreak() {
-    _CPU.isExecuting = false;
+    _KernelInterruptQueue.enqueue( new Interrupt(PROCESS_TERMINATED, "") );
 }
 
 // Function for EC
