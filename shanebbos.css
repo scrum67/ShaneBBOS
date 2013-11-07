@@ -84,6 +84,22 @@ h3 {
 	font-size: 12pt;
 }
 
+#RQtable {
+    background-color:#D0D0D0;
+	border: 2px solid #585858; 
+	cursor: default;
+	width: 265px;
+	font-size: 12pt;
+}
+
+#RQtable {
+    background-color:#D0D0D0;
+	border: 2px solid #585858; 
+	cursor: default;
+	width: 265px;
+	font-size: 12pt;
+}
+
 .label {
     text-align: center;
     display: block;
