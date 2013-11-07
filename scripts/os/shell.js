@@ -582,6 +582,7 @@ function shellRun(args) {
 function shellRunAll(args) {
     for(i in _ResidentList) {
     //for(var i = 0; i < _ResidentList.length; ++i) {
+        var pid;
         pid = _ResidentList[i].pid
         shellRun(pid + "");
     }
