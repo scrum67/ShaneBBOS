@@ -564,7 +564,6 @@ function shellRun(args) {
             
             for(var i = 0; i < _ResidentList.length; ++i) {
                 if((_ResidentList[i].pid + "") === args) {
-                    
                     bool = true;
                 }
             }
@@ -581,9 +580,9 @@ function shellRun(args) {
 
 function shellRunAll(args) {
     for(var i = 0; i < _ResidentList.length; ++i) {
-        var pid;
-        pid = _ResidentList[i].pid
-        shellRun(pid + "");
+      //  var pid;
+    //    pid = _ResidentList[i].pid
+        shellRun(i + "");
     }
         
     
@@ -607,13 +606,7 @@ function shellKill(args) {
         //_ReadyQueue.shift();
         //_KernelInterruptQueue.enqueue( new Interrupt(PROCESS_TERMINATED, "") );
         
-        /**
-        for (var i = 0; i < CpuScheduler.readyQueue.getSize(); i++) {
-            var process = CpuScheduler.readyQueue.dequeue();
-            if (process.processId !== pcb.processId) {
-               CpuScheduler.readyQueue.enqueue(process);
-            }
-        }*/
+
         
         
         
