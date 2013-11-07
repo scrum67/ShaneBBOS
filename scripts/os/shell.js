@@ -536,7 +536,7 @@ function shellLoad()
                         }
                         else if(_MemoryManager.memoryPartitions.thirdOpen === true) {
                             for(var j = 0; j < commands.length; j++) {
-                            _Memory[j + PARTITION_SIZE * 2] = commands[j];
+                            _Memory[j + (PARTITION_SIZE * 2)] = commands[j];
                             }
                             pcb.base = _MemoryManager.memoryPartitions.thirdBase;
                             pcb.limit = _MemoryManager.memoryPartitions.thirdLimit;

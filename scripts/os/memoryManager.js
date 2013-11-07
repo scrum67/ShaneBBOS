@@ -42,7 +42,7 @@ function MemoryManager(){
 	this.memoryPartitions.secondOpen = true;
 	
 	// base of third partition, 512
-	this.memoryPartitions.thirdBase = PARTITION_SIZE;
+	this.memoryPartitions.thirdBase = PARTITION_SIZE*2;
 	// limit of third partition, 767
 	this.memoryPartitions.thirdLimit = PARTITION_SIZE * 3 - 1;
 	// if the third partition is open or not
