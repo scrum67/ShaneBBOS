@@ -119,7 +119,7 @@ function hostBtnStartOS_click(btn) {
     _ResidentList = [];
     
     // initialize resident list
-    _ReadyQueue = new Queue;
+    _ReadyQueue = [];
 
     // ... then set the host clock pulse ...
     _hardwareClockID = setInterval(hostClockPulse, CPU_CLOCK_INTERVAL);

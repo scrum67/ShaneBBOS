@@ -80,4 +80,25 @@ function MemoryDisplay() {
 	    var output = padding + PC;
 	    return output;
 	}
+	
+	
+    this.updateRQDisplayOne = function(pcb) {
+        document.getElementById('PID1').innerHTML = pcb.pid;
+        document.getElementById('Base1').innerHTML = pcb.base;
+        document.getElementById('Limit1').innerHTML = pcb.limit;
+    }
+    
+    this.updateRQDisplayTwo = function(pcb) {
+        document.getElementById('PID2').innerHTML = pcb.pid;
+        document.getElementById('Base2').innerHTML = pcb.base;
+        document.getElementById('Limit2').innerHTML = pcb.limit;
+    }
+    
+    this.updateRQDisplayThree = function(pcb) {
+        document.getElementById('PID3').innerHTML = pcb.pid;
+        document.getElementById('Base3').innerHTML = pcb.base;
+        document.getElementById('Limit3').innerHTML = pcb.limit;
+    }
+	
+	
 }

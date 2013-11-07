@@ -45,18 +45,16 @@ function Cpu() {
         this.Xreg  = pcb.Xreg;  
         this.Yreg  = pcb.Yreg;  
         this.Zflag = pcb.Zflag;
+        
+        _CurrentProcess = pcb;
     };
     
     this.cycle = function() {
         krnTrace("CPU cycle");
-        console.log("PC: " + this.PC)
         // TODO: Accumulate CPU usage and profiling statistics here.
         // Do the real work here. Be sure to set this.isExecuting appropriately.
         
-        console.log("mem: " + (_CurrentProcess.base + _CPU.PC))
-        console.log("op: " + _MemoryManager.getLocation(_CPU.PC))
         this.executeInstruction(_MemoryManager.getLocation(_CPU.PC));
-        
         updateCPUDisplay();
         _MemoryDisplay.updateMemoryDisplay();
     };

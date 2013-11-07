@@ -22,6 +22,8 @@ var KEYBOARD_IRQ = 1;
 
 var PROCESS_TERMINATED = 2;
 
+var QUANTUM = 6;
+
 //
 // Global Variables
 //

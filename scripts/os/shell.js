@@ -139,6 +139,27 @@ function shellInit() {
     sc.function = shellRunAll;
     this.commandList[this.commandList.length] = sc;
     
+    // quantum
+    sc = new ShellCommand();
+    sc.command = "quantum";
+    sc.description = "- Sets the quantum";
+    sc.function = shellQuantum;
+    this.commandList[this.commandList.length] = sc;
+    
+    // kill
+    sc = new ShellCommand();
+    sc.command = "kill";
+    sc.description = "- Kills an active process";
+    sc.function = shellKill;
+    this.commandList[this.commandList.length] = sc;
+    
+    // processes
+    sc = new ShellCommand();
+    sc.command = "processes";
+    sc.description = "- List the running processes and their IDs";
+    sc.function = shellProcesses;
+    this.commandList[this.commandList.length] = sc;
+    
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
 
@@ -483,7 +504,6 @@ function shellLoad()
                     bool = false;
             }
             var pcb = new ProcessControlBlock(_PID);
-            _CurrentProcess = pcb;
 
             
             if (bool)
@@ -498,12 +518,11 @@ function shellLoad()
                         if(_MemoryManager.memoryPartitions.firstOpen === true) {
                             for(var j = 0; j < commands.length; j++) {
                                 _Memory[j] = commands[j];
-                                console.log("j: " + j);
-                                console.log("op: " + _Memory[j]);
                             }
                             pcb.base = _MemoryManager.memoryPartitions.firstBase;
                             pcb.limit = _MemoryManager.memoryPartitions.firstLimit;
                             _MemoryManager.memoryPartitions.firstOpen = false;
+                            _MemoryDisplay.updateRQDisplayOne(pcb);
                         }
                         else if(_MemoryManager.memoryPartitions.secondOpen === true) {
                             for(var j = 0; j < commands.length; j++) {
@@ -513,6 +532,7 @@ function shellLoad()
                             pcb.base = _MemoryManager.memoryPartitions.secondBase;
                             pcb.limit = _MemoryManager.memoryPartitions.secondLimit;
                             _MemoryManager.memoryPartitions.secondOpen = false;
+                            _MemoryDisplay.updateRQDisplayTwo(pcb);
                         }
                         else if(_MemoryManager.memoryPartitions.thirdOpen === true) {
                             for(var j = 0; j < commands.length; j++) {
@@ -521,6 +541,7 @@ function shellLoad()
                             pcb.base = _MemoryManager.memoryPartitions.thirdBase;
                             pcb.limit = _MemoryManager.memoryPartitions.thirdLimit;
                             _MemoryManager.memoryPartitions.thirdOpen = false;
+                            _MemoryDisplay.updateRQDisplayOne(pcb);
                         }
 
                         // increment global _PID for next program
@@ -538,46 +559,69 @@ function shellLoad()
 
 function shellRun(args) {
     if (args.length > 0) {
-        
-            // TODO: throw interrupt to cpu when process is done executing, to
-            //       delete process from _ResidentList (use splice() method)
-            
-
-            
             // add specified process to ready queue
-            _ReadyQueue.enqueue(_ResidentList[args]);
-
-            var pcb = _ReadyQueue.dequeue();
-            _CPU.contextSwitch(pcb);
-            // take PCB off the queue, store it into global _CurrentProcess
-            _CurrentProcess = pcb;
-
-            console.log(_CurrentProcess);
+            var bool = false;
             
-            // ensure a valid PID is specfied
-            if(args == _CurrentProcess.pid) {
+            for(var i = 0; i < _ResidentList.length; ++i) {
+                if((_ResidentList[i].pid + "") === args) {
+                    
+                    bool = true;
+                }
+            }
             
-            // reset the program counter
-            
-            _CPU.isExecuting = true;
+            if(bool) {
+                _ReadyQueue.push(_ResidentList[args]);
+                _CPU.isExecuting = true;
             } else 
                 _StdIn.putText("Invalid PID specified");
+
     } else
         _StdIn.putText("Usage: run <pid>");
 }
 
 function shellRunAll(args) {
-    for(i in _ResidentList) {
-		_ResidentList.shift();
-		_ReadyQueue.enqueue(_ResidentList[i]);
-    }
+    for(var i = 0; i < _ResidentList.length; ++i) {
+            shellRun(i + "");
+        }
+        
     
-	_CurrentProcess = _ReadyQueue.dequeue();
-    
-    _CPU.PC = _CurrentProcess.base;
+  //  _CPU.PC = _CurrentProcess.base;
     // TODO: delete program from memory after finished executing? Maybe not, j(os)eph does not
     
-    _CPU.isExecuting = true;
-    
-
 }
+
+function shellQuantum(args) {
+    if(args.length()) {
+        QUANTUM = args;
+    } else {
+        _StdIn.putText("Usage: quantum <int>");
+    }
+}
+
+function shellKill(args) {
+    
+    
+    
+    // check if isExecuting is true for specified process? Might not need to
+        
+}
+
+function shellProcesses(args) {
+    var numProcesses = 0;
+	for( i in _ResidentList) {
+		numProcesses++;
+	}
+	
+	if( numProcesses > 0 ) {
+		_StdIn.putText("Active Processes: ");
+		
+		for(i in _ResidentList) {
+			_StdIn.putText(String(_ResidentList[i].pid) + " ");
+		}
+	} else {
+		_StdIn.putText("There are currently no active processes...");
+	}
+}
+
+
+

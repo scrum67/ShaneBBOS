@@ -72,7 +72,7 @@ function krnShutdown()
 }
 
 // counter for clock pulses for round robin
-var counter;
+var counter = 0;
 
 function krnOnCPUClockPulse() 
 {
@@ -89,28 +89,30 @@ function krnOnCPUClockPulse()
         var interrupt = _KernelInterruptQueue.dequeue();
         krnInterruptHandler(interrupt.irq, interrupt.params);
     }
-    else if (_CPU.isExecuting) // If there are no interrupts then run one CPU cycle if there is anything being processed.
+    else if (_ReadyQueue.length > 0) // If there are no interrupts then run one CPU cycle if there is anything being processed.
     {
+        if (_CurrentProcess === null){
+            _CPU.contextSwitch(_ReadyQueue[0]);
+        }
         _CPU.cycle();
-    }    
-    else                       // If there are no interrupts and there is nothing being executed then just be idle.
+
+    }
+    else // If there are no interrupts and there is nothing being executed then just be idle.
     {
    //    krnTrace("Idle");
     }
     
+        // ROUND ROBIN SCHEDULING
     
-    
-    // ROUND ROBIN SCHEDULING
-    
-    counter++;
-    
-    if(counter >= 6) {
-        counter = 0;
-        var pcb = _ReadyQueue.dequeue;
-        _CPU.contextSwitch()
-    }
-    
-    
+         counter++;
+         if(counter >= QUANTUM) {
+             counter = 0;
+             if(_ReadyQueue.length != 0) {
+             var pcb = _ReadyQueue.shift();
+             _CPU.contextSwitch(_ReadyQueue[0])
+             _ReadyQueue.push(pcb);
+             }
+         }
 }
 
 
@@ -150,6 +152,12 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             _StdIn.handleInput();
             break;
         case PROCESS_TERMINATED:
+            _ReadyQueue.shift();
+            if(_ReadyQueue.length === 0) {
+                _CurrentProcess = null;
+            } else {
+                _CPU.contextSwitch(_ReadyQueue[0]);
+            }
             _CPU.isExecuting = false;
             break;
         default: 
