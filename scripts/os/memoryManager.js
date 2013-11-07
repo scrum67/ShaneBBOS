@@ -4,6 +4,9 @@ function MemoryManager(){
         _CPU.PC++;
         return _Memory[_CurrentProcess.base + _CPU.PC];
     }
+    this.getLocation = function(location) {
+        return _Memory[_CurrentProcess.base + location];
+    }
 
 	// Function to get the decimal address from a command with two parameters (ex. 8D 10 00)
 	// NOTE: Be careful with this.  If used twice in one op code, it will increment the PC every time
@@ -19,7 +22,7 @@ function MemoryManager(){
         
         // validate the address to ensure that it is within memory
         if (_CurrentProcess.base + decMemAddress >= _CurrentProcess.base  && _CurrentProcess.base + decMemAddress <= _CurrentProcess.limit)
-            return decMemAddress;
+            return _CurrentProcess.base + decMemAddress;
         else 
             _StdIn.putText("Error: Address is out of bounds");
 	}

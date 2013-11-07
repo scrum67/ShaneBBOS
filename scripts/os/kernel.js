@@ -71,6 +71,8 @@ function krnShutdown()
     krnTrace("end shutdown OS");
 }
 
+// counter for clock pulses for round robin
+var counter;
 
 function krnOnCPUClockPulse() 
 {
@@ -100,7 +102,13 @@ function krnOnCPUClockPulse()
     
     // ROUND ROBIN SCHEDULING
     
+    counter++;
     
+    if(counter >= 6) {
+        counter = 0;
+        var pcb = _ReadyQueue.dequeue;
+        _CPU.contextSwitch()
+    }
     
     
 }

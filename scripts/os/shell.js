@@ -462,7 +462,7 @@ function shellStatus(args)
 
 function shellBsod()
 {
-    _KernelInterruptQueue.enqueue( new Interrupt(10, "") );
+    _KernelInterruptQueue.enqueue( new Interrupt(10 , "") );
 }
 
 
@@ -488,31 +488,41 @@ function shellLoad()
             
             if (bool)
             {
-                var numOfProcesses = _ResidentList.length;
-
                 // this is probably just temporary, but check that only one process is running at a time
-                if(numOfProcesses >= 3)
+                if(_ResidentList.length >= 3)
                     _StdIn.putText("Error: Only three processes can be loaded at a time")
                 else {
                     // put commands in memory
-                    for(var j = 0; j < commands.length; j++) {
+
                         //TODO: add partition size to j, (relocation value?)
-                        if(numOfProcesses === 0) {
-                            _Memory[j] = commands[j];
+                        if(_MemoryManager.memoryPartitions.firstOpen === true) {
+                            for(var j = 0; j < commands.length; j++) {
+                                _Memory[j] = commands[j];
+                                console.log("j: " + j);
+                                console.log("op: " + _Memory[j]);
+                            }
                             pcb.base = _MemoryManager.memoryPartitions.firstBase;
                             pcb.limit = _MemoryManager.memoryPartitions.firstLimit;
+                            _MemoryManager.memoryPartitions.firstOpen = false;
                         }
-                        else if(numOfProcesses === 1) {
+                        else if(_MemoryManager.memoryPartitions.secondOpen === true) {
+                            for(var j = 0; j < commands.length; j++) {
                             _Memory[j + PARTITION_SIZE] = commands[j];
+                            }
+
                             pcb.base = _MemoryManager.memoryPartitions.secondBase;
                             pcb.limit = _MemoryManager.memoryPartitions.secondLimit;
+                            _MemoryManager.memoryPartitions.secondOpen = false;
                         }
-                        else if(numOfProcesses === 2) {
-                            _Memory[j + PARTITION_SIZE * numOfProcesses] = commands[j];
+                        else if(_MemoryManager.memoryPartitions.thirdOpen === true) {
+                            for(var j = 0; j < commands.length; j++) {
+                            _Memory[j + PARTITION_SIZE * 2] = commands[j];
+                            }
                             pcb.base = _MemoryManager.memoryPartitions.thirdBase;
                             pcb.limit = _MemoryManager.memoryPartitions.thirdLimit;
+                            _MemoryManager.memoryPartitions.thirdOpen = false;
                         }
-                    }
+
                         // increment global _PID for next program
                         _PID++;
                         _ResidentList.push(pcb);
