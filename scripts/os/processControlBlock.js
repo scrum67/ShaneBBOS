@@ -9,4 +9,5 @@ function ProcessControlBlock (pid){
     this.Xreg  = 0;     // X register
     this.Yreg  = 0;     // Y register
     this.Zflag = 0;     // Z-ero flag (Think of it as "isZero".)
+	this.inMemory = true;
 }

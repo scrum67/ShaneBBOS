@@ -157,6 +157,7 @@ function noOp() {
 
 // Function for 00
 function systemBreak() {
+	_ReadyQueue.shift();
     _KernelInterruptQueue.enqueue( new Interrupt(PROCESS_TERMINATED, "") );
 }
 
@@ -206,17 +207,18 @@ function incrementVal() {
     _CPU.PC++;
 }
 
-
 // Function for FF
 function systemCall() {
-    if (_CPU.Xreg == 1) {
+    if (_CPU.Xreg === 1) {
         // output the integer in the Y register
         _StdIn.putText(String(parseInt(_CPU.Yreg)));
         _StdIn.advanceLine();
         _StdIn.putText(">");
     } else if (_CPU.Xreg == 2) {
+		
+		
         // get the decimal address of the hex value in the Y register
-        var address = parseInt(_CPU.Yreg, 16);
+        var address = parseInt(_CPU.Yreg, 16) + _CurrentProcess.base;
         // the current address in memory (from Y register)
         var current = _Memory[address];
         
@@ -239,5 +241,3 @@ function systemCall() {
     }
     _CPU.PC++;
 }
-
-

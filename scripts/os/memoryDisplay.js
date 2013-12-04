@@ -1,10 +1,14 @@
 function MemoryDisplay() {
-    
+	
 	// Two-dimensional array for the table display of memory
 	var memoryDisplayArray = null;
 	
+	var fileSysDisplayArray = null;
 	
 	this.createMemoryTable = function() {
+		
+			memoryDisplayOn = true;
+			
     	    var memoryTable = document.getElementById("memoryTable");
     	     
     	    var rows = [];
@@ -15,13 +19,6 @@ function MemoryDisplay() {
     	    // one partition memory table has 32 rows
     	    for (var i = 0; i < 96; i++) {
     	        rows[i] = memoryTable.insertRow(i);
-    	        // if that row is 0, 32, or 64, change color of the row to signify a new partition starts 
-    	        // NOTE: would use  _MemoryManager.memoryPartitions.firstBase / 8, but _MemoryManager is out of scope
-    	       //// if(i === 0 || i === 32 || i === 64)
-    	        
-			    // rows[i].style.backgroundColor = "green";
-    	        
-    	        //rows[i] = memoryTable.insertRow(i);
     	        
     	        rowcolumns[i] = [];
     	        
@@ -42,30 +39,13 @@ function MemoryDisplay() {
 	
 	// Function to display memory to the console
 	this.updateMemoryDisplay = function() {
-	    //  Check which partition you're in and put contents of memory in that partition
-    	    var count = 0;
-    	    if(_ResidentList.length === 1) {
-    	            for (var i = 0; i < 32; i++) {
-    	                for (var j = 1; j < 9; j++) {
-            	            memoryDisplayArray[i][j].innerHTML = _Memory[count];
-            	            count++;
-    	                   }
-    	            }
-    	    } else if(_ResidentList.length === 2) {
-    	            for (var i = 33; i < 64; i++) {
-    	                for (var j = 1; j < 9; j++) {
-            	            memoryDisplayArray[i][j].innerHTML = _Memory[count];
-            	            count++;
-    	                   }
-    	            }
-    	    } else if(_ResidentList.length=== 3) {
-    	        for (var i = 65; i < 96; i++) {
-    	                for (var j = 1; j < 9; j++) {
-            	            memoryDisplayArray[i][j].innerHTML = _Memory[count];
-            	            count++;
-    	                   }
-    	            }
-    	    }
+		var count = 0;
+		for (var i = 0; i < 96; i++) {
+    		for (var j = 1; j < 9; j++) {
+            	memoryDisplayArray[i][j].innerHTML = _Memory[count];
+				count++;
+			}
+		}	
 	}
 	
 	this.hexDisplayPC = function(PC) {
@@ -100,5 +80,40 @@ function MemoryDisplay() {
         document.getElementById('Limit3').innerHTML = pcb.limit;
     }
 	
+
+	this.createFileSystemTable = function() {
+		var memoryDisplayOn = false;
+		var fileSysTable = document.getElementById("fileSystemTable");
+		
+		var rows = [];
+		var rowcolumns = [];
+		
+		// localStorage.length is 256
+		for(var i = 0; i < localStorage.length; ++i) {
+			rows[i] = fileSysTable.insertRow(i);
+			
+			rowcolumns[i] = [];
+			
+			for(var j = 0; j < 2; ++j) {
+				rowcolumns[i][j] = rows[i].insertCell(-1);
+				
+    	        if(j === 0)
+    	            rowcolumns[i][j].innerHTML = localStorage.key(i);
+    	        else {
+        	        rowcolumns[i][j].innerHTML = "";
+				}
+			}
+		}
+		
+		fileSysDisplayArray = rowcolumns;
+	}
+	
+	this.updateFileSystemTable = function() {
+		var row = 0;
+		for(key in localStorage) {
+			fileSysDisplayArray[row][1].innerHTML = localStorage[key];
+			row++;
+		}
+	}
 	
 }

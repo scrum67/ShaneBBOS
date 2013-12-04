@@ -38,9 +38,10 @@ function krnBootstrap()      // Page 8.
    krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
    krnTrace(krnKeyboardDriver.status);
 
-   //
-   // ... more?
-   //
+   krnTrace("Loading the file system device driver.");
+   kfnFileSysDriver = new FileSystemDeviceDriver();  
+   kfnFileSysDriver.driverEntry();
+   krnTrace(FileSystemDeviceDriver.status);
 
    // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
    krnTrace("Enabling the interrupts.");
@@ -92,7 +93,7 @@ function krnOnCPUClockPulse()
     else if (_ReadyQueue.length > 0) // If there are no interrupts then run one CPU cycle if there is anything being processed.
     {
         if (_CurrentProcess === null){
-            _CPU.contextSwitch(_ReadyQueue[0]);
+			_KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH, _ReadyQueue[0]));
         }
         _CPU.cycle();
 
@@ -102,19 +103,17 @@ function krnOnCPUClockPulse()
    //    krnTrace("Idle");
     }
     
+	
+		_MemoryDisplay.updateFileSystemTable();
+		
         // ROUND ROBIN SCHEDULING
     
-         counter++;
-         if(counter >= QUANTUM) {
-             counter = 0;
-            // if(_ReadyQueue.length != 0) {
-             var pcb = _ReadyQueue.shift();
-             console.log(pcb);
-             _CPU.contextSwitch(_ReadyQueue[0])
-             _ReadyQueue.push(pcb);
-            hostLog("Scheduling change", "OS");
-             //}
-         }
+        counter++;
+
+		// execute current schedule
+		_CurrentSchedule();
+
+
 }
 
 
@@ -153,12 +152,18 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             krnKeyboardDriver.isr(params);   // Kernel mode device driver
             _StdIn.handleInput();
             break;
+		case CONTEXT_SWITCH:
+			if(params.inMemory === false) {
+				_MemoryManager.rollIn(params);
+			}
+			_CPU.contextSwitch(params);
+			break;
         case PROCESS_TERMINATED:
-            _ReadyQueue.shift();
             if(_ReadyQueue.length === 0) {
                 _CurrentProcess = null;
             } else {
-                _CPU.contextSwitch(_ReadyQueue[0]);
+				_KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH, _ReadyQueue[0]));
+            //    _CPU.contextSwitch(_ReadyQueue[0]);
             }
             _CPU.isExecuting = false;
             break;

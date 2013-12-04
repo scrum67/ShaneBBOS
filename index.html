@@ -29,26 +29,29 @@
         <script type="text/javascript" src="scripts/os/processControlBlock.js"></script>
         <script type="text/javascript" src="scripts/os/memoryManager.js"></script>
         <script type="text/javascript" src="scripts/os/memoryDisplay.js"></script>
+        <script type="text/javascript" src="scripts/os/scheduler.js"></script>
+        <script type="text/javascript" src="scripts/os/FileSystemDeviceDriver.js"></script>
+
 
         <!-- Other Routines -->
         <script type="text/javascript" src="scripts/utils.js"></script>
-        <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
+        <!-- <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script> -->
     </head>
     
-    <body onload="hostInit();">
+    <body onLoad="hostInit();">
         <div id="divMain" style="width:100%;">
             <div id="divStatus">
                 <span>OS Status:</span>
                 <span id="status">The OS is running smoothly.</span>
                 <span id="datetime"></span>
             </div>
-            <div id="divButtonBar" style="margin:4px;">
+            <div id="divButtonBar" style="margin:4px;" >
                 <input type="button" id="btnStartOS" name="brnStartOS" class="normal_button"
-                value="Start" tabindex="0" onclick="hostBtnStartOS_click(this);">
+                value="Start" tabindex="0" onClick="hostBtnStartOS_click(this);">
                 <input type="button" id="btnHaltOS" name="brnHaltOS" class="normal_button"
-                value="Halt" tabindex="1" onclick="hostBtnHaltOS_click(this);">
+                value="Halt" tabindex="1" onClick="hostBtnHaltOS_click(this);">
                 <input type="button" id="btnReset" name="brnReset" class="normal_button"
-                value="Reset" tabindex="2" onclick="hostBtnReset_click(this);">
+                value="Reset" tabindex="2" onClick="hostBtnReset_click(this);">
             </div>
             <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
                 <canvas id="display" width="500px" height="500px" tabindex="3"></canvas>
@@ -68,14 +71,28 @@
                 </div>
             </div>
             <div id="thirdColumn" style="float:left; margin-left: 10px;">
-                <div>
+                <div id="divMemory" style="float:left; clear: both;">
                     <label class="label">Memory
-                        <div id="divMemory" style="float:left; clear: both;">
+                        <div id = "innerMem">
                         <table border=2 id=memoryTable>
                         </table>
                         </div>
                     </label>
                 </div>
+                <div id="divFileSystem" style="float:left; clear: both;">
+                    <label class="label">File System
+                        <div id = "innerFile">
+                        <table border=2 id=fileSystemTable>
+                        </table>
+                        </div>
+                    </label>
+                </div>
+                
+                <div id="divButton" style="float:left; clear: both;">
+                <input type="button" id="toggleBtn" name="toggle"
+                value="Toggle Memory/File System" onClick="toggleMemory(this);">
+                </div>
+                
                 <div id="divCPU" style="float:left; clear: both; margin-top:10px;">
                     <label class="label">CPU
                         <table border=2 id=CPUtable>

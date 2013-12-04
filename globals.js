@@ -22,6 +22,8 @@ var KEYBOARD_IRQ = 1;
 
 var PROCESS_TERMINATED = 2;
 
+var CONTEXT_SWITCH = 3;
+
 var QUANTUM = 6;
 
 //
@@ -78,7 +80,14 @@ var _SarcasticMode = false;
 // Global Device Driver Objects - page 12
 var krnKeyboardDriver = null;
 
+// Global File System Device Driver
+var kfnFileSysDriver = null;
+
 // For testing...
 var _GLaDOS = null;
 
+var _Scheduler = null;
 
+var _CurrentSchedule = null;
+
+var memoryDisplayOn = true;

@@ -159,11 +159,64 @@ function shellInit() {
     sc.description = "- List the running processes and their IDs";
     sc.function = shellProcesses;
     this.commandList[this.commandList.length] = sc;
+	
+	// create
+	sc = new ShellCommand();
+    sc.command = "create";
+    sc.description = "- Creates a new file";
+    sc.function = shellCreate;
+    this.commandList[this.commandList.length] = sc;
     
-    // processes - list the running processes and their IDs
-    // kill <id> - kills the specified process id.
-
-    //
+	// read
+	sc = new ShellCommand();
+    sc.command = "read";
+    sc.description = "- Reads the contents of a file";
+    sc.function = shellRead;
+    this.commandList[this.commandList.length] = sc;
+    
+	
+	// write
+	sc = new ShellCommand();
+    sc.command = "write";
+    sc.description = "- Writes to a file";
+    sc.function = shellWrite;
+    this.commandList[this.commandList.length] = sc;
+	
+	// delete
+	sc = new ShellCommand();
+    sc.command = "delete";
+    sc.description = "- Deletes a file";
+    sc.function = shellDelete;
+    this.commandList[this.commandList.length] = sc;
+	
+	// format
+	sc = new ShellCommand();
+    sc.command = "format";
+    sc.description = "- Formats a file";
+    sc.function = shellFormat;
+    this.commandList[this.commandList.length] = sc;
+	
+	// ls
+	sc = new ShellCommand();
+    sc.command = "ls";
+    sc.description = "- Lists current files on disk";
+    sc.function = shellls;
+    this.commandList[this.commandList.length] = sc;
+	
+	// setschedule
+	sc = new ShellCommand();
+    sc.command = "setschedule";
+    sc.description = "- Sets the scheduling algorithm";
+    sc.function = shellSetSchedule;
+    this.commandList[this.commandList.length] = sc;
+	
+	// getschedule
+	sc = new ShellCommand();
+    sc.command = "getschedule";
+    sc.description = "- Gets the current scheduling algorithm";
+    sc.function = shellGetSchedule;
+    this.commandList[this.commandList.length] = sc;
+	
     // Display the initial prompt.
     this.putPrompt();
 }
@@ -475,6 +528,8 @@ function shellStatus(args)
                 {
                     status += args[i] + " ";
                 }
+				
+			status = status.charAt(0).toUpperCase() + status.slice(1);
             document.getElementById("status").innerHTML = status;
         }
     else
@@ -506,11 +561,14 @@ function shellLoad()
             var pcb = new ProcessControlBlock(_PID);
 
             
-            if (bool)
-            {
-                // this is probably just temporary, but check that only one process is running at a time
-                if(_ResidentList.length >= 3)
-                    _StdIn.putText("Error: Only three processes can be loaded at a time")
+            if (bool) {
+                if(_ResidentList.length >= 3) {
+					// rollOut a process
+					_ResidentList.push(pcb);
+					_MemoryManager.rollOut(pcb);
+					_PID++;
+					_MemoryDisplay.updateMemoryDisplay();
+				}
                 else {
                     // put commands in memory
 
@@ -536,7 +594,7 @@ function shellLoad()
                         }
                         else if(_MemoryManager.memoryPartitions.thirdOpen === true) {
                             for(var j = 0; j < commands.length; j++) {
-                            _Memory[j + ((((PARTITION_SIZE * 2))))] = commands[j];
+                            _Memory[j + (PARTITION_SIZE * 2)] = commands[j];
                             }
                             pcb.base = _MemoryManager.memoryPartitions.thirdBase;
                             pcb.limit = _MemoryManager.memoryPartitions.thirdLimit;
@@ -561,32 +619,29 @@ function shellRun(args) {
     if (args.length > 0) {
             // add specified process to ready queue
             var bool = false;
-            
+			
             for(var i = 0; i < _ResidentList.length; ++i) {
-                if((_ResidentList[i].pid + "") === args) {
+                if((_ResidentList[i].pid + "") === args.toString()) {
                     bool = true;
                 }
             }
-            
-            if(bool) {
+			if(_ResidentList[args].inMemory === false && bool) {
+				_KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH, _ResidentList[args]));
+			}
+			if(bool) {
                 _ReadyQueue.push(_ResidentList[args]);
                 _CPU.isExecuting = true;
             } else 
                 _StdIn.putText("Invalid PID specified");
-
     } else
         _StdIn.putText("Usage: run <pid>");
 }
 
 function shellRunAll(args) {
-   // for(var i = 0; i < _ResidentList.length; ++i) {
-   for(i in _ResidentList) {
-      //  var pid;
-    //    pid = _ResidentList[i].pid
-
-        shellRun(i + "");
-    }
-    
+	len = _ResidentList.length;
+	for(var i = 0; i< len; ++i) {
+    	shellRun(i + "");
+	}	
 }
 
 function shellQuantum(args) {
@@ -598,24 +653,16 @@ function shellQuantum(args) {
 }
 
 function shellKill(args) {
-    if(args = _CurrentProcess.pid) {
-        //kill current process
-      //  _CPU.isExecuting = false;
-        //_ReadyQueue.shift();
-        //_KernelInterruptQueue.enqueue( new Interrupt(PROCESS_TERMINATED, "") );
-        
-    } else {
-        // look through ready queue and kill the specified process
+        // look through ready queue and take processes off
         for(var i = 0; i < _ReadyQueue.length; ++i) {
-            var process = _ReadyQueue.shift()
-            if(process.pid !== parseInt(args)) {
-                _ReadyQueue.push(process);
-                console.log("hi");
-            }
-        }
-    }
-        
+            var process = _ReadyQueue.shift();
 
+			// if the process is not the specified one, put it back
+            if(process.pid !== parseInt(args[0])) {
+                _ReadyQueue.push(process);
+            } else 
+				_KernelInterruptQueue.enqueue( new Interrupt(PROCESS_TERMINATED, "") );
+        }
 }
 
 function shellProcesses(args) {
@@ -635,5 +682,64 @@ function shellProcesses(args) {
 	}
 }
 
+function shellCreate(args) {
+	var filename = args[0];
+
+	if(	kfnFileSysDriver.createFile(filename) === true)
+		_StdIn.putText("File created successfully.");
+}
+
+function shellRead(args) {
+	var filename = args[0];
+	
+	_StdIn.putText(kfnFileSysDriver.readFile(filename));
+}
+
+function shellWrite(args) {
+	var filename = args[0];
+	var fileData = 	args[1]
+	
+	
+	if(kfnFileSysDriver.writeFile(filename, fileData) === true)
+		_StdIn.putText("Write to file completed successfully.");
+	else
+		_StdIn.putText("Error in writing to file.");
+}
 
 
+
+function shellDelete(args) {
+	var filename = args[0];
+	if(kfnFileSysDriver.deleteFile(filename) === true)
+		_StdIn.putText("File deleted successfully.");
+	else
+		_StdIn.putText("Error in deleting file.");
+}
+
+function shellFormat(args) {
+	kfnFileSysDriver.formatFile();
+}
+
+function shellls(args) {
+	kfnFileSysDriver.listFiles();
+}
+
+function shellSetSchedule(args) {
+	var schedule = args[0];
+	
+	if(schedule === 'fcfs') {
+		_CurrentSchedule = _Scheduler.fcfs();
+		_StdIn.putText("Current scheduling algorithm: First-Come First-Serve")
+	} else if(schedule === 'rr') {
+		_CurrentSchedule = _Scheduler.roundrobin();
+		_StdIn.putText("Current scheduling algorithm: Round Robin")
+	} else if(schedule === 'priority') {
+		_CurrentSchedule = _Scheduler.priority();
+		_StdIn.putText("Current scheduling algorithm: Priority")
+	} else 
+		_StdIn.putText("Usage: setschedule <fcfs | rr | priority>");
+}
+
+function shellGetSchedule(args) {
+	_StdIn.putText(_CurrentSchedule);
+}
