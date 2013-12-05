@@ -563,9 +563,11 @@ function shellLoad()
             
             if (bool) {
                 if(_ResidentList.length >= 3) {
-					// rollOut a process
 					_ResidentList.push(pcb);
-					_MemoryManager.rollOut(pcb);
+					kfnFileSysDriver.createFile(String(pcb.pid));
+					kfnFileSysDriver.writeFile(String(pcb.pid), input);
+					pcb.inMemory = false;
+					_StdIn.putText("PID: " + _PID);
 					_PID++;
 					_MemoryDisplay.updateMemoryDisplay();
 				}
@@ -580,17 +582,14 @@ function shellLoad()
                             pcb.base = _MemoryManager.memoryPartitions.firstBase;
                             pcb.limit = _MemoryManager.memoryPartitions.firstLimit;
                             _MemoryManager.memoryPartitions.firstOpen = false;
-                            _MemoryDisplay.updateRQDisplayOne(pcb);
                         }
                         else if(_MemoryManager.memoryPartitions.secondOpen === true) {
                             for(var j = 0; j < commands.length; j++) {
                             _Memory[j + PARTITION_SIZE] = commands[j];
                             }
-
                             pcb.base = _MemoryManager.memoryPartitions.secondBase;
                             pcb.limit = _MemoryManager.memoryPartitions.secondLimit;
                             _MemoryManager.memoryPartitions.secondOpen = false;
-                            _MemoryDisplay.updateRQDisplayTwo(pcb);
                         }
                         else if(_MemoryManager.memoryPartitions.thirdOpen === true) {
                             for(var j = 0; j < commands.length; j++) {
@@ -599,7 +598,6 @@ function shellLoad()
                             pcb.base = _MemoryManager.memoryPartitions.thirdBase;
                             pcb.limit = _MemoryManager.memoryPartitions.thirdLimit;
                             _MemoryManager.memoryPartitions.thirdOpen = false;
-                            _MemoryDisplay.updateRQDisplayThree(pcb);
                         }
 
                         // increment global _PID for next program
@@ -640,6 +638,7 @@ function shellRun(args) {
 function shellRunAll(args) {
 	len = _ResidentList.length;
 	for(var i = 0; i< len; ++i) {
+	    console.log(_ReadyQueue[i].pid);
     	shellRun(i + "");
 	}	
 }

@@ -32,7 +32,7 @@ function MemoryDisplay() {
         	            rowcolumns[i][j].innerHTML = "00";
         	       colcount++;
     			}
-    			colcount  -=  1;
+    			colcount -= 1;
     	    }
     	    memoryDisplayArray = rowcolumns;
 	}
@@ -61,23 +61,37 @@ function MemoryDisplay() {
 	    return output;
 	}
 	
+	this.updateRQDisplay = function() {
+	        if(_ReadyQueue.length > 2)
+	            this.updateRQDisplayThree(_ReadyQueue[2]);
+	       else if(_ReadyQueue.length > 1)
+	            this.updateRQDisplayTwo(_ReadyQueue[1]);
+	       else if(_ReadyQueue.length > 0)
+	            this.updateRQDisplayOne(_ReadyQueue[0]);
+	}
 	
     this.updateRQDisplayOne = function(pcb) {
         document.getElementById('PID1').innerHTML = pcb.pid;
         document.getElementById('Base1').innerHTML = pcb.base;
         document.getElementById('Limit1').innerHTML = pcb.limit;
+        document.getElementById('InMem1').innerHTML = pcb.inMemory;
+		document.getElementById('Priority1').innerHTML = pcb.priority;
     }
     
     this.updateRQDisplayTwo = function(pcb) {
         document.getElementById('PID2').innerHTML = pcb.pid;
         document.getElementById('Base2').innerHTML = pcb.base;
         document.getElementById('Limit2').innerHTML = pcb.limit;
+        document.getElementById('InMem2').innerHTML = pcb.inMemory;
+		document.getElementById('Priority2').innerHTML = pcb.priority;
     }
     
     this.updateRQDisplayThree = function(pcb) {
         document.getElementById('PID3').innerHTML = pcb.pid;
         document.getElementById('Base3').innerHTML = pcb.base;
         document.getElementById('Limit3').innerHTML = pcb.limit;
+        document.getElementById('InMem3').innerHTML = pcb.inMemory;
+		document.getElementById('Priority3').innerHTML = pcb.priority;
     }
 	
 
@@ -104,7 +118,7 @@ function MemoryDisplay() {
 				}
 			}
 		}
-		
+		console.log(fileSysDisplayArray);
 		fileSysDisplayArray = rowcolumns;
 	}
 	

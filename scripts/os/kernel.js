@@ -103,7 +103,7 @@ function krnOnCPUClockPulse()
    //    krnTrace("Idle");
     }
     
-	
+        _MemoryDisplay.updateRQDisplay();
 		_MemoryDisplay.updateFileSystemTable();
 		
         // ROUND ROBIN SCHEDULING
@@ -153,7 +153,9 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             _StdIn.handleInput();
             break;
 		case CONTEXT_SWITCH:
+		    console.log("javascript sucks");
 			if(params.inMemory === false) {
+			    console.log("EVERYWHERE");
 				_MemoryManager.rollIn(params);
 			}
 			_CPU.contextSwitch(params);
@@ -163,7 +165,6 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
                 _CurrentProcess = null;
             } else {
 				_KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH, _ReadyQueue[0]));
-            //    _CPU.contextSwitch(_ReadyQueue[0]);
             }
             _CPU.isExecuting = false;
             break;

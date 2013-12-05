@@ -51,39 +51,58 @@ function MemoryManager(){
 	
 	this.rollOut = function(process) {
 		var filename = String(process.pid);
-		var input = document.getElementById('taProgramInput').value.trim();
+		var string = "";
+    	for(var i = process.base; i < (PARTITION_SIZE + process.base); ++i) {
+    		string += _Memory[i] + " ";
+    	}
+		//var input = document.getElementById('taProgramInput').value.trim();
 		kfnFileSysDriver.createFile(filename);
-		kfnFileSysDriver.writeFile(filename, input);
+		kfnFileSysDriver.writeFile(filename, string);
 		process.inMemory = false;
-		_StdIn.putText("PID: " + process.pid)
 	}
 	
+	
+	
 	this.rollIn = function(process) {
-		var filename = String(process.pid);
+	    console.log(process.inMemory);
+		var filename = process.pid.toString();
 		var program = kfnFileSysDriver.readFile(filename);
+		program = program.split(" ");
+		var memoryPart = _MemoryManager.getOpenPartition();
+		if(memoryPart === null) {
+		    //rollout a partition
+		    var swapProcess = this.getLeastImportantProcess();
+		    this.rollOut(swapProcess);
+		    process.base = swapProcess.base;
+		    process.limit = swapProcess.limit;
+		    console.log(process.base);
+		    var string = "";
+    		for(var i = process.base; i < program.length + process.base; ++i) {
+    			string = program[i - process.base];
+    			_Memory[i] = string.toUpperCase();
+    		}
+        }
 		kfnFileSysDriver.deleteFile(filename);
-		if(_ReadyQueue.length === 3) {
-			var shifted = _ReadyQueue.shift(_ReadyQueue[_ReadyQueue.length-1]);
-		} else {
-			for(i in _ResidentList) {
-				if(_ResidentList[i].inMemory === true) 
-					break;
-			}
-			var shifted = _ResidentList[i];
-		}
-		var string = "";
-		for(var i = shifted.base; i < shifted.limit; ++i) {
-			string += _Memory[i] + " ";
-		}
-		
-		var temp = program.split(" ");
-		for(var i = 0; i < temp.length; ++i) {
-			_Memory[i + shifted.base] =  temp[i];		
-		}
-
-		fname = String(shifted.pid);
-		kfnFileSysDriver.createFile(fname);
-		kfnFileSysDriver.writeFile(fname, string);
-		_MemoryDisplay.updateMemoryDisplay();
+		process.inMemory = true;
+	}
+	
+	this.getOpenPartition = function() {
+		    if(this.memoryPartitions.firstOpen === true)
+		        return 1;
+		    else if(this.memoryPartitions.secondOpen === true)
+		        return 2;
+		    else if(this.memoryPartitions.thirdOpen === true)
+		        return 3;
+		return null;
+	}
+	
+	
+	this.getLeastImportantProcess = function() {
+	    var lowestProc = _ResidentList[0];
+	    for(i in _ResidentList) {
+	        if(_ResidentList[i].inMemory)
+	            lowestProc = _ResidentList[i];
+	    }
+	    return lowestProc;
 	}
 }
