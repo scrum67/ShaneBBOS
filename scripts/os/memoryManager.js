@@ -66,10 +66,8 @@ function MemoryManager(){
 	this.rollIn = function(process) {
 		var filename = process.pid.toString();
 		var program = kfnFileSysDriver.readFile(filename);
-		console.log("UNIQUENESS EVERYWHERE: " + _CPU.PC)
 		program = program.split(" ");
 		var memoryPart = _MemoryManager.getOpenPartition();
-				console.log("UNIQUENESS NOWHERE: " + _CPU.PC)
 
 		if(memoryPart === null) {
 		    //rollout a partition

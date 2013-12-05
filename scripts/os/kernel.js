@@ -83,25 +83,18 @@ function krnOnCPUClockPulse()
        that it has to look for interrupts and process them if it finds any.                           */
 
     // Check for an interrupt, are any. Page 560
-    if (_KernelInterruptQueue.getSize() > 0)    
-    {        console.log("Unique String: " + _CPU.PC);
-
+    if (_KernelInterruptQueue.getSize() > 0)     {
         // Process the first interrupt on the interrupt queue.
         // TODO: Implement a priority queue based on the IRQ number/id to enforce interrupt priority.
         var interrupt = _KernelInterruptQueue.dequeue();
         krnInterruptHandler(interrupt.irq, interrupt.params);
-                console.log(interrupt.irq);
-
     }
     else if (_ReadyQueue.length > 0) // If there are no interrupts then run one CPU cycle if there is anything being processed.
     {
         if (_CurrentProcess === null){
 			_KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH, _ReadyQueue[0]));
-			    console.log("Logan");
         }
         _CPU.cycle();
-            console.log("Gurt");
-
     }
     else // If there are no interrupts and there is nothing being executed then just be idle.
     {
@@ -113,9 +106,6 @@ function krnOnCPUClockPulse()
 		
         // ROUND ROBIN SCHEDULING
         counter++;
-        console.log("Uniquer String: " + _CPU.PC);
-		// execute current schedule
-	//	_CurrentSchedule;
 }
 
 
@@ -159,7 +149,6 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
 				_MemoryManager.rollIn(params);
 			}
 			_CPU.contextSwitch(params);
-			console.log(params);
 
 			break;
         case PROCESS_TERMINATED:
