@@ -43,8 +43,8 @@ function createFile(filename) {
 
 function readFile(filename) {
 	var directory = getFilename(filename);
-	var values = localStorage[directory].split(",");;
-	
+	var values = localStorage[directory].split(",");
+    console.log(localStorage[directory]);
 	var file = [values[1], values[2], values[3]];
 	file = file.join();
 
@@ -319,5 +319,3 @@ function getAssociatedFiles(file) {
 	}
 	return connectedFiles;
 }
-
-
