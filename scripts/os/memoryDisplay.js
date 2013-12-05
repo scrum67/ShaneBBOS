@@ -64,36 +64,65 @@ function MemoryDisplay() {
 	this.updateRQDisplay = function() {
 	        if(_ReadyQueue.length > 2)
 	            this.updateRQDisplayThree(_ReadyQueue[2]);
-	       else if(_ReadyQueue.length > 1)
+	       else
+	            this.updateRQDisplayThree(null);
+	       if(_ReadyQueue.length > 1)
 	            this.updateRQDisplayTwo(_ReadyQueue[1]);
-	       else if(_ReadyQueue.length > 0)
+	       else
+	            this.updateRQDisplayTwo(null);
+	       if(_ReadyQueue.length > 0)
 	            this.updateRQDisplayOne(_ReadyQueue[0]);
+	       else
+	            this.updateRQDisplayOne(null);
 	}
 	
     this.updateRQDisplayOne = function(pcb) {
-        document.getElementById('PID0').innerHTML = pcb.pid;
-        document.getElementById('Base0').innerHTML = pcb.base;
-        document.getElementById('Limit0').innerHTML = pcb.limit;
-        document.getElementById('InMem0').innerHTML = pcb.inMemory;
-		document.getElementById('Priority0').innerHTML = pcb.priority;
+        if(pcb !== null) {
+            document.getElementById('PID0').innerHTML = pcb.pid;
+            document.getElementById('Base0').innerHTML = pcb.base;
+            document.getElementById('Limit0').innerHTML = pcb.limit;
+            document.getElementById('InMem0').innerHTML = pcb.inMemory;
+    		document.getElementById('Priority0').innerHTML = pcb.priority;
+        } else {
+            document.getElementById('PID0').innerHTML = "---";
+            document.getElementById('Base0').innerHTML = "---";
+            document.getElementById('Limit0').innerHTML = "---";
+            document.getElementById('InMem0').innerHTML = "---";
+    		document.getElementById('Priority0').innerHTML = "---";
+        }
     }
     
     this.updateRQDisplayTwo = function(pcb) {
-        document.getElementById('PID1').innerHTML = pcb.pid;
-        document.getElementById('Base1').innerHTML = pcb.base;
-        document.getElementById('Limit1').innerHTML = pcb.limit;
-        document.getElementById('InMem1').innerHTML = pcb.inMemory;
-		document.getElementById('Priority1').innerHTML = pcb.priority;
+        if(pcb !== null) {
+            document.getElementById('PID1').innerHTML = pcb.pid;
+            document.getElementById('Base1').innerHTML = pcb.base;
+            document.getElementById('Limit1').innerHTML = pcb.limit;
+            document.getElementById('InMem1').innerHTML = pcb.inMemory;
+    		document.getElementById('Priority1').innerHTML = pcb.priority;
+        } else {
+            document.getElementById('PID1').innerHTML = "---";
+            document.getElementById('Base1').innerHTML = "---";
+            document.getElementById('Limit1').innerHTML = "---";
+            document.getElementById('InMem1').innerHTML = "---";
+    		document.getElementById('Priority1').innerHTML = "---";
+        }
     }
     
     this.updateRQDisplayThree = function(pcb) {
-        document.getElementById('PID2').innerHTML = pcb.pid;
-        document.getElementById('Base2').innerHTML = pcb.base;
-        document.getElementById('Limit2').innerHTML = pcb.limit;
-        document.getElementById('InMem2').innerHTML = pcb.inMemory;
-		document.getElementById('Priority2').innerHTML = pcb.priority;
+        if(pcb !== null) {
+            document.getElementById('PID2').innerHTML = pcb.pid;
+            document.getElementById('Base2').innerHTML = pcb.base;
+            document.getElementById('Limit2').innerHTML = pcb.limit;
+            document.getElementById('InMem2').innerHTML = pcb.inMemory;
+    		document.getElementById('Priority2').innerHTML = pcb.priority;
+        } else {
+            document.getElementById('PID2').innerHTML = "---";
+            document.getElementById('Base2').innerHTML = "---";
+            document.getElementById('Limit2').innerHTML = "---";
+            document.getElementById('InMem2').innerHTML = "---";
+    		document.getElementById('Priority2').innerHTML = "---";
+        }
     }
-	
 
 	this.createFileSystemTable = function() {
 		var memoryDisplayOn = false;
@@ -118,7 +147,6 @@ function MemoryDisplay() {
 				}
 			}
 		}
-		console.log(fileSysDisplayArray);
 		fileSysDisplayArray = rowcolumns;
 	}
 	

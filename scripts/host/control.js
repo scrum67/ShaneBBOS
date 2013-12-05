@@ -119,7 +119,7 @@ function hostBtnStartOS_click(btn) {
 	_Scheduler = new Scheduler();
 	
 	// default schedule is round robin
-	_CurrentSchedule = _Scheduler.roundrobin;
+	_CurrentSchedule = _Scheduler.roundrobin();
 
     // initialize resident list
     _ResidentList = {};

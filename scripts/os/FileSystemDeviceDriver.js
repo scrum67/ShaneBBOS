@@ -63,9 +63,7 @@ function readFile(filename) {
 	dataArray = dataArray.join();
 	dataArray.trim();
 	dataArray = dataArray.replace(/,/g,'');
-	console.log(dataArray);
 	return dataArray;
-	
 }
 
 
