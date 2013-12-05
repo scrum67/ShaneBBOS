@@ -105,7 +105,17 @@ function krnOnCPUClockPulse()
 		_MemoryDisplay.updateFileSystemTable();
 		
         // ROUND ROBIN SCHEDULING
-        counter++;
+        RRCounter++;
+		// execute current schedule
+		console.log(_CurrentSchedule);
+		if(_CurrentSchedule === "RR")
+    		_Scheduler.roundrobin();
+    	else if(_CurrentSchedule === "FCFS")
+    	    _Scheduler.fcfs();
+    	else if(_CurrentSchedule === "PRIORITY")
+    	    _Scheduler.priority();
+    	    
+		//_CurrentSchedule;
 }
 
 

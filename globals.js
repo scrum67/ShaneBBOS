@@ -90,4 +90,6 @@ var _Scheduler = null;
 
 var _CurrentSchedule = null;
 
+var RRCounter = 0;
+
 var memoryDisplayOn = true;

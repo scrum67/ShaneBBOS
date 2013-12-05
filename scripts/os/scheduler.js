@@ -1,12 +1,15 @@
 function Scheduler() {
 	this.roundrobin = function() {
 		QUANTUM = 6;
-		if(counter >= QUANTUM) {
-			counter = 0;
-       	if(_ReadyQueue.length != 0) {
+		
+		if(RRCounter >= QUANTUM) {
+			RRCounter = 0;
+			console.log(_ReadyQueue.length);
+       	if(_ReadyQueue.length !== 0) {
+       	    console.log(RRCounter);
         	var pcb = _ReadyQueue.shift();
 			_ReadyQueue.push(pcb);
-			_KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH, _ReadyQueue[0]));
+			_KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH, _ReadyQueue[pcb.pid]));
             hostLog("Scheduling change", "OS");
          	}
      	}
