@@ -122,7 +122,7 @@ function hostBtnStartOS_click(btn) {
 	_CurrentSchedule = _Scheduler.roundrobin;
 
     // initialize resident list
-    _ResidentList = [];
+    _ResidentList = {};
     
     // initialize resident list
     _ReadyQueue = [];

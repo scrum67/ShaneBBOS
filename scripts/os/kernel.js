@@ -153,14 +153,13 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             _StdIn.handleInput();
             break;
 		case CONTEXT_SWITCH:
-		    console.log("javascript sucks");
 			if(params.inMemory === false) {
-			    console.log("EVERYWHERE");
 				_MemoryManager.rollIn(params);
 			}
 			_CPU.contextSwitch(params);
 			break;
         case PROCESS_TERMINATED:
+            krnKillProcess(_CurrentProcess);
             if(_ReadyQueue.length === 0) {
                 _CurrentProcess = null;
             } else {
@@ -168,7 +167,7 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             }
             _CPU.isExecuting = false;
             break;
-        default: 
+        default:
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
     }
 }
@@ -226,4 +225,30 @@ function krnTrapError(msg)
     document.write("<body style='background-color:blue;'>BLUE SCREEN OF DEATH</body>");
 
     krnShutdown();
+}
+
+function krnKillProcess(process) {
+  var found = -1;
+  for (i in _ReadyQueue) {
+    if (_ReadyQueue[i].pid === process.pid)
+      found = i;
+  }
+
+  if(found !== -1) {
+    if(_ReadyQueue[found].inMemory) {
+      _MemoryManager.clearPartition(_ReadyQueue[found]);
+    } else if (kfnFileSysDriver.getFilename(process.pid) !== null) {
+      kfnFileSysDriver.deleteFile(process.pid);
+    }
+
+    _ReadyQueue.splice(found, 1);
+    delete _ResidentList[process.pid];
+
+   /** if (found === 0 && _ReadyQueue.length > 0) {
+      krnUpdateProcessOrder();
+    } else if (_ReadyQueue.length === 0) {
+      _CurrentProcess = null;
+    } else {
+    }*/
+  }
 }

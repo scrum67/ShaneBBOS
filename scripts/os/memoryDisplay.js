@@ -71,6 +71,14 @@ function MemoryDisplay() {
 	}
 	
     this.updateRQDisplayOne = function(pcb) {
+        document.getElementById('PID0').innerHTML = pcb.pid;
+        document.getElementById('Base0').innerHTML = pcb.base;
+        document.getElementById('Limit0').innerHTML = pcb.limit;
+        document.getElementById('InMem0').innerHTML = pcb.inMemory;
+		document.getElementById('Priority0').innerHTML = pcb.priority;
+    }
+    
+    this.updateRQDisplayTwo = function(pcb) {
         document.getElementById('PID1').innerHTML = pcb.pid;
         document.getElementById('Base1').innerHTML = pcb.base;
         document.getElementById('Limit1').innerHTML = pcb.limit;
@@ -78,20 +86,12 @@ function MemoryDisplay() {
 		document.getElementById('Priority1').innerHTML = pcb.priority;
     }
     
-    this.updateRQDisplayTwo = function(pcb) {
+    this.updateRQDisplayThree = function(pcb) {
         document.getElementById('PID2').innerHTML = pcb.pid;
         document.getElementById('Base2').innerHTML = pcb.base;
         document.getElementById('Limit2').innerHTML = pcb.limit;
         document.getElementById('InMem2').innerHTML = pcb.inMemory;
 		document.getElementById('Priority2').innerHTML = pcb.priority;
-    }
-    
-    this.updateRQDisplayThree = function(pcb) {
-        document.getElementById('PID3').innerHTML = pcb.pid;
-        document.getElementById('Base3').innerHTML = pcb.base;
-        document.getElementById('Limit3').innerHTML = pcb.limit;
-        document.getElementById('InMem3').innerHTML = pcb.inMemory;
-		document.getElementById('Priority3').innerHTML = pcb.priority;
     }
 	
 

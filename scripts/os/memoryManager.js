@@ -64,9 +64,9 @@ function MemoryManager(){
 	
 	
 	this.rollIn = function(process) {
-	    console.log(process.inMemory);
 		var filename = process.pid.toString();
 		var program = kfnFileSysDriver.readFile(filename);
+
 		program = program.split(" ");
 		var memoryPart = _MemoryManager.getOpenPartition();
 		if(memoryPart === null) {
@@ -75,7 +75,6 @@ function MemoryManager(){
 		    this.rollOut(swapProcess);
 		    process.base = swapProcess.base;
 		    process.limit = swapProcess.limit;
-		    console.log(process.base);
 		    var string = "";
     		for(var i = process.base; i < program.length + process.base; ++i) {
     			string = program[i - process.base];
@@ -105,4 +104,16 @@ function MemoryManager(){
 	    }
 	    return lowestProc;
 	}
+	
+	this.clearPartition = function(process) {
+        for(var i = process.base; i < process.limit; i++) {
+            Memory[i] = "00";
+        }
+        if(process.base === this.memoryPartitions.firstBase)
+            this.memoryPartitions.firstOpen = true;
+        else if(process.base === this.memoryPartitions.secondBase)
+            this.memoryPartitions.secondBase = true;
+        else if(process.base === this.memoryPartitions.thirdBase)
+            this.memoryPartitions.thirdBase = true;
+    };
 }

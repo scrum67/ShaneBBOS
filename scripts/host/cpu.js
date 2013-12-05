@@ -157,7 +157,6 @@ function noOp() {
 
 // Function for 00
 function systemBreak() {
-	_ReadyQueue.shift();
     _KernelInterruptQueue.enqueue( new Interrupt(PROCESS_TERMINATED, "") );
 }
 

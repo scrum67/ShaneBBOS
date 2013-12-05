@@ -53,7 +53,7 @@ function readFile(filename) {
 	var dataArray = [];
 	
 	for(i in assocFiles) {
-		var vals = localStorage[assocFiles[i]].split(",");;
+		var vals = localStorage[assocFiles[i]].split(",");
 		var fileData = vals[4];
 		if(fileData.indexOf("~") !== -1) {
 			fileData = fileData.substring(0, fileData.indexOf("~"));
@@ -61,6 +61,9 @@ function readFile(filename) {
 		dataArray.push(fileData);
 	}
 	dataArray = dataArray.join();
+	dataArray.trim();
+	dataArray = dataArray.replace(/,/g,'');
+	console.log(dataArray);
 	return dataArray;
 	
 }
@@ -87,7 +90,7 @@ function writeFile(filename, fileData) {
 			var current;
 			var nextFile = file;
 			
-			for(var i = 1; i <blocks.length; ++i) {
+			for(var i = 1; i < blocks.length; ++i) {
 				current = nextFile;
 				
 				nextFile = getAvailFile();

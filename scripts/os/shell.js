@@ -562,8 +562,8 @@ function shellLoad()
 
             
             if (bool) {
-                if(_ResidentList.length >= 3) {
-					_ResidentList.push(pcb);
+                if(_MemoryManager.getOpenPartition() === null) {
+					_ResidentList[pcb.pid] = pcb;
 					kfnFileSysDriver.createFile(String(pcb.pid));
 					kfnFileSysDriver.writeFile(String(pcb.pid), input);
 					pcb.inMemory = false;
@@ -602,7 +602,7 @@ function shellLoad()
 
                         // increment global _PID for next program
                         _PID++;
-                        _ResidentList.push(pcb);
+					    _ResidentList[pcb.pid] = pcb;
 
                         _StdIn.putText("PID: " + String(pcb.pid));
                         _MemoryDisplay.updateMemoryDisplay();
@@ -618,7 +618,7 @@ function shellRun(args) {
             // add specified process to ready queue
             var bool = false;
 			
-            for(var i = 0; i < _ResidentList.length; ++i) {
+            for(i in _ResidentList) {
                 if((_ResidentList[i].pid + "") === args.toString()) {
                     bool = true;
                 }
@@ -636,11 +636,12 @@ function shellRun(args) {
 }
 
 function shellRunAll(args) {
-	len = _ResidentList.length;
-	for(var i = 0; i< len; ++i) {
-	    console.log(_ReadyQueue[i].pid);
+	for(i in _ResidentList) {
     	shellRun(i + "");
-	}	
+	}
+	for(i in _ReadyQueue) {
+	   console.log(_ReadyQueue[i]);
+	}
 }
 
 function shellQuantum(args) {
@@ -652,6 +653,8 @@ function shellQuantum(args) {
 }
 
 function shellKill(args) {
+    krnKillProcess(_ResidentList[parseInt(args)]);
+    /**
         // look through ready queue and take processes off
         for(var i = 0; i < _ReadyQueue.length; ++i) {
             var process = _ReadyQueue.shift();
@@ -662,6 +665,8 @@ function shellKill(args) {
             } else 
 				_KernelInterruptQueue.enqueue( new Interrupt(PROCESS_TERMINATED, "") );
         }
+        
+        delete _ResidentList[parseInt(args)];*/
 }
 
 function shellProcesses(args) {
